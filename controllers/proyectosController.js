@@ -1,0 +1,99 @@
+const Proyectos = require('../models/Proyectos');
+const slug = require('slug');
+
+exports.proyectosHome = async (req,res)=> {
+
+	const proyectos = await Proyectos.findAll();
+
+
+	res.render('index',
+	{
+		nombrePagina : "Proyectos",
+		proyectos
+	})
+		
+	}
+exports.formularioProyecto = async (req, res) => {
+	const proyectos = await Proyectos.findAll();
+	res.render('nuevoProyecto', {
+		nombrePagina : "Nuevo Proyecto",
+		proyectos
+	});
+}
+
+exports.nuevoProyecto = async (req,res) => {
+	const proyectos = await Proyectos.findAll();
+
+	const { nombre } = req.body;
+	let errores = [];
+
+	if (!nombre) {
+		errores.push({'texto': 'Agrega un nombre al Proyecto'})
+	}
+
+	if(errores.length > 0 ){
+		res.render('nuevoProyecto', {
+			nombrePagina: 'Nuevo Proyecto',
+			errores,
+			proyectos
+		});
+	} else {
+		//los hooks corren en determinado tiempo
+
+		// const url =slug(nombre).toLowerCase(); 
+		 //el slug quita los espacios, los convierte en guiones
+		const proyecto = await Proyectos.create({ nombre });
+		res.redirect('/');
+		// .then(() => console.log('Insertado Correctamente'))
+		//++.catch(error => console.log(error));
+
+	}
+ }
+
+ exports.proyectoPorUrl = async (req,res) =>{
+ 	// res.send(req.params.url); //devuelve la URL
+
+ 	const proyectos = await Proyectos.findAll();
+
+ 	const proyecto = await Proyectos.findOne({
+ 		where:{
+ 			url: req.params.url
+ 		}
+
+ 	});
+
+ 	if (!proyecto) return next();
+
+ 	//render a la vista
+
+ 	res.render('Tareas',{ 
+ 		nombrePagina : 'Tareas del Proyecto',
+ 		proyecto,
+ 		proyectos
+ 	});
+
+ }
+
+ exports.formularioEditar = async(req,res) => {
+ 	const proyectosPromise =  Proyectos.findAll();
+
+ 	const proyectoPromise = await Proyectos.findOne({
+ 		where{
+ 			url: req.params.id;
+
+ 		}
+ 	});
+
+
+ 	//render a la vista
+ 	res.render('nuevoProyecto',{
+ 		nombrePagina : 'Editar Proyecto',
+ 		proyectos,
+ 		proyecto
+
+ 	});
+
+ }
+	
+
+
