@@ -4,7 +4,7 @@ const router = express.Router();
 
 
 //impoartar express validator
-const { body } = require('express-validator/check');
+const { body } = require('express-validator');
 
 
 //importar el controlador
@@ -15,10 +15,10 @@ module.exports = function(){
 //ruta para el home
 	router.get('/', proyectosController.proyectosHome);
 
-	// para get
+	// para get 
 	router.get('/nuevo-proyecto', proyectosController.formularioProyecto);
 
-	//para el post
+	//para el post - para ALTA / ESCRIBIR  el proyecto
 	router.post('/nuevo-proyecto',
 		body('nombre').not().isEmpty().trim().escape(),
 		proyectosController.nuevoProyecto);
@@ -31,7 +31,11 @@ module.exports = function(){
 	router.get('/proyectos/:url', proyectosController.proyectoPorUrl);//  ":url" puede ser cualquier nombre de var
      
      //Actualizar el proyecto
-     router.get('/proyecto/editar/:id', proyectosController.formularioEditar);
+	 router.get('/proyecto/editar/:id', proyectosController.formularioEditar);
+	 router.post('/nuevo-proyecto/:id',
+		body('nombre').not().isEmpty().trim().escape(),
+		proyectosController.actualizarProyecto
+	 );
 
 	return router;
 }

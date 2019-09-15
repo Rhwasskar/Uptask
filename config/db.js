@@ -4,7 +4,7 @@ const Sequelize = require('sequelize');
 const db = new Sequelize('uptasknode', 'root', 'password', {
   host: '127.0.0.1',
   dialect: 'mysql',
-  port:'3306',
+  port:'3307',
   operatorAliases: false,
   define:{
   	timestamps: false

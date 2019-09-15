@@ -42,7 +42,7 @@ exports.nuevoProyecto = async (req,res) => {
 
 		// const url =slug(nombre).toLowerCase(); 
 		 //el slug quita los espacios, los convierte en guiones
-		const proyecto = await Proyectos.create({ nombre });
+		await Proyectos.create({ nombre });
 		res.redirect('/');
 		// .then(() => console.log('Insertado Correctamente'))
 		//++.catch(error => console.log(error));
@@ -52,15 +52,13 @@ exports.nuevoProyecto = async (req,res) => {
 
  exports.proyectoPorUrl = async (req,res) =>{
  	// res.send(req.params.url); //devuelve la URL
-
- 	const proyectos = await Proyectos.findAll();
-
- 	const proyecto = await Proyectos.findOne({
- 		where:{
- 			url: req.params.url
- 		}
-
- 	});
+ 	const proyectosPromise =  Proyectos.findAll();
+	const proyectoPromise = Proyectos.findOne({
+		where:{
+			url:req.params.url
+		}
+	});
+	const [proyectos,proyecto] = await Promise.all([proyectosPromise, proyectoPromise]);
 
  	if (!proyecto) return next();
 
@@ -75,14 +73,15 @@ exports.nuevoProyecto = async (req,res) => {
  }
 
  exports.formularioEditar = async(req,res) => {
+	 
  	const proyectosPromise =  Proyectos.findAll();
-
- 	const proyectoPromise = await Proyectos.findOne({
- 		where{
- 			url: req.params.id;
-
- 		}
- 	});
+	const proyectoPromise = Proyectos.findOne({
+		where:{
+			id:req.params.id
+		}
+	});
+	const [proyectos,proyecto] = await Promise.all([proyectosPromise, proyectoPromise]);
+ 	// const proyectoPromise = await Proyectos.findOne({where{url: req.params.id }});
 
 
  	//render a la vista
@@ -96,4 +95,34 @@ exports.nuevoProyecto = async (req,res) => {
  }
 	
 
+ exports.actualizarProyecto = async (req,res) => {
+	const proyectos = await Proyectos.findAll();
 
+	const { nombre } = req.body;
+	let errores = [];
+
+	if (!nombre) {
+		errores.push({'texto': 'Agrega un nombre al Proyecto'})
+	}
+
+	if(errores.length > 0 ){
+		res.render('nuevoProyecto', {
+			nombrePagina: 'Nuevo Proyecto',
+			errores,
+			proyectos
+		});
+	} else {
+		//los hooks corren en determinado tiempo
+
+		// const url =slug(nombre).toLowerCase(); 
+		 //el slug quita los espacios, los convierte en guiones
+		await Proyectos.update(
+			{ nombre: nombre },  //QUÉ ACTUALIZO
+			{where: { id: req.params.id }}		//ESTE SERÍA EL WHERE
+		);
+		res.redirect('/');
+		// .then(() => console.log('Insertado Correctamente'))
+		//++.catch(error => console.log(error));
+
+	}
+ }
