@@ -24,6 +24,7 @@ html(lang="en")
 							each proyecto in proyectos
 								li
 									a(href=`/proyectos/${proyecto.url}`)= proyecto.nombre
+									//- pre= Object.keys(vardump(proyecto))
 						
 						
 
@@ -31,3 +32,4 @@ html(lang="en")
 			block contenido
 
 			//- pre= vardump(proyectos)
+		script(src="/dist/bundle.js")

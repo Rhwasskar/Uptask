@@ -5,11 +5,14 @@ exports.proyectosHome = async (req,res)=> {
 
 	const proyectos = await Proyectos.findAll();
 
+	// const keis = keys(proyectos);
+	// console.log(keis);
 
 	res.render('index',
 	{
 		nombrePagina : "Proyectos",
-		proyectos
+		proyectos,
+		// keis,
 	})
 		
 	}
@@ -19,6 +22,7 @@ exports.formularioProyecto = async (req, res) => {
 		nombrePagina : "Nuevo Proyecto",
 		proyectos
 	});
+	// console.log('pasando pasando pasando pasando pasando' + proyectos.toString())
 }
 
 exports.nuevoProyecto = async (req,res) => {
@@ -88,9 +92,10 @@ exports.nuevoProyecto = async (req,res) => {
  	res.render('nuevoProyecto',{
  		nombrePagina : 'Editar Proyecto',
  		proyectos,
- 		proyecto
+		 proyecto
 
- 	});
+	 });
+	//  console.log(proyecto.dataValues);
 
  }
 	
@@ -125,4 +130,19 @@ exports.nuevoProyecto = async (req,res) => {
 		//++.catch(error => console.log(error));
 
 	}
+ }
+
+ exports.eliminarProyecto = async (req,res,next) =>{
+	 //Req contiene la info, ypodemos utilizar query o params.
+	 const {urlProyecto} = req.query; 
+
+	 const resultado = await Proyectos.destroy({where: {url:urlProyecto }})
+	
+	 if (!resultado){
+		 return next();
+
+	 } 
+	 res.status(200).send('Proyecyo eliminado correctamente');
+	 
+
  }

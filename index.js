@@ -25,7 +25,7 @@ const app = express();
 app.use(express.static('public'));
 
 //donde cargaer los archivos estaáticos
-app.use(express.static('public'));
+// app.use(express.static('public'));
 
 // Habilitar pug
 app.set('view engine', 'pug');
